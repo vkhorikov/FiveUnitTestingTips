@@ -2,42 +2,45 @@
 using System.Collections.Generic;
 using CSharpFunctionalExtensions;
 
-namespace App2
+namespace Module2
 {
     public class VendingMachine
     {
         public int SnacksLeft { get; private set; }
         public State State { get; private set; }
 
-        public VendingMachine()
+        public VendingMachine(int numberOfSnacks)
         {
-            State = State.ReadyToAcceptPayment;
-            SnacksLeft = 3;
+            if (numberOfSnacks < 1)
+                throw new Exception("The number of snacks must be positive");
+
+            State = State.AcceptingPayment;
+            SnacksLeft = numberOfSnacks;
         }
 
         public void InsertDollar()
         {
-            if (State == State.ReadyToDispenseSnack || State == State.Empty)
+            if (State == State.DispensingSnack || State == State.Empty)
                 return;
 
-            if (State != State.ReadyToAcceptPayment)
+            if (State != State.AcceptingPayment)
                 throw new InvalidOperationException($"Unknown state: {State.Name}");
 
-            State = State.ReadyToDispenseSnack;
+            State = State.DispensingSnack;
         }
 
         public void DispenseSnack()
         {
-            if (State == State.ReadyToAcceptPayment || State == State.Empty)
+            if (State == State.AcceptingPayment || State == State.Empty)
                 return;
 
-            if (State != State.ReadyToDispenseSnack)
+            if (State != State.DispensingSnack)
                 throw new InvalidOperationException($"Unknown state: {State.Name}");
 
             SnacksLeft--;
             if (SnacksLeft > 0)
             {
-                State = State.ReadyToAcceptPayment;
+                State = State.AcceptingPayment;
             }
             else
             {
@@ -47,21 +50,21 @@ namespace App2
 
         public void LoadSnacks(int numberOfSnacks)
         {
-            if (State == State.ReadyToAcceptPayment || State == State.ReadyToDispenseSnack)
+            if (State == State.AcceptingPayment || State == State.DispensingSnack)
                 return;
 
             if (State != State.Empty)
                 throw new InvalidOperationException($"Unknown state: {State.Name}");
 
             SnacksLeft += numberOfSnacks;
-            State = State.ReadyToAcceptPayment;
+            State = State.AcceptingPayment;
         }
     }
 
     public class State : ValueObject
     {
-        public static readonly State ReadyToAcceptPayment = new State("Ready to accept payment");
-        public static readonly State ReadyToDispenseSnack = new State("Ready to dispense a snack");
+        public static readonly State AcceptingPayment = new State("Accepting payment");
+        public static readonly State DispensingSnack = new State("Dispensing a snack");
         public static readonly State Empty = new State("Empty");
 
         public string Name { get; }

@@ -1,4 +1,4 @@
-﻿namespace App2
+﻿namespace Module2
 {
     public class Program
     {

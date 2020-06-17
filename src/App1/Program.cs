@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Xunit;
 
-namespace App1
+namespace Module1
 {
     public class Program
     {
@@ -170,7 +170,7 @@ namespace App1
         public void Division_by_zero_with_memorization()
         {
             int divisor = 0;
-            CalculatorController calculator = CreateCalculatorWithMemorizedDivident(10);
+            CalculatorController calculator = CreateCalculatorWithMemorizedDividend(10);
 
             Envelope<int> response = calculator.Divide(divisor);
 
@@ -182,7 +182,7 @@ namespace App1
         public void Division_of_two_values_with_memorization()
         {
             int divisor = 2;
-            CalculatorController calculator = CreateCalculatorWithMemorizedDivident(10);
+            CalculatorController calculator = CreateCalculatorWithMemorizedDividend(10);
 
             Envelope<int> response = calculator.Divide(divisor);
 
@@ -190,7 +190,7 @@ namespace App1
             response.Result.Should().Be(5);
         }
 
-        private CalculatorController CreateCalculatorWithMemorizedDivident(int dividend)
+        private CalculatorController CreateCalculatorWithMemorizedDividend(int dividend)
         {
             var calculator = new CalculatorController();
             calculator.Memorize(dividend);
