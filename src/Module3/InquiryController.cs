@@ -5,34 +5,30 @@ namespace Module3
     public class InquiryController
     {
         private readonly InquiryRepository _repository;
+        private readonly IDateTimeServer _timeServer;
 
-        public InquiryController(InquiryRepository repository)
+        public InquiryController(InquiryRepository repository, IDateTimeServer timeServer)
         {
             _repository = repository;
+            _timeServer = timeServer;
         }
 
         public string Add(int id)
         {
-            bool isApproved = false;
-            DateTime? timeApproved = null;
-
-            _repository.Add(id, isApproved, timeApproved);
+            var inquiry = new Inquiry(id, false, null);
+            _repository.Add(inquiry);
 
             return "OK";
         }
 
         public string Approve(int id)
         {
-            object[] data = _repository.GetById(id);
-            if (data == null)
+            Inquiry inquiry = _repository.GetById(id);
+            if (inquiry == null)
                 return "Not found";
 
-            bool isApproved = (bool)data[0];
-
-            if (!isApproved)
-            {
-                _repository.Update(id, true, DateTime.Now);
-            }
+            inquiry.Approve(_timeServer.Now);
+            _repository.Update(inquiry);
 
             return "OK";
         }
@@ -44,9 +40,19 @@ namespace Module3
         }
     }
 
+    public interface IDateTimeServer
+    {
+        DateTime Now { get; }
+    }
+
+    public class DateTimeServer : IDateTimeServer
+    {
+        public DateTime Now => DateTime.Now;
+    }
+
     public class InquiryRepository
     {
-        public void Add(int id, bool isApproved, DateTime? timeApproved)
+        public void Add(Inquiry inquiry)
         {
             // Use Dapper with an INSERT SQL statement
         }
@@ -56,14 +62,14 @@ namespace Module3
             // Use Dapper with a DELETE SQL statement
         }
 
-        public object[] GetById(int id)
+        public Inquiry GetById(int id)
         {
             // Use Dapper with a SELECT SQL statement
 
-            return new object[] { false, null };
+            return new Inquiry(id, false, null);
         }
 
-        public void Update(int id, bool isApproved, DateTime? timeApproved)
+        public void Update(Inquiry inquiry)
         {
             // Use Dapper with an UPDATE SQL statement
         }
