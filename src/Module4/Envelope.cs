@@ -13,7 +13,7 @@
             ErrorCode = errorCode;
         }
 
-        public static Envelope Ok(object result)
+        public static Envelope Ok(object result = null)
         {
             return new Envelope(result, null);
         }
